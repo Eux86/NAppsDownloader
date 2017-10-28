@@ -53,9 +53,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="MainWindowModel\NextAppItem.cs" />
-    <Compile Include="MultiCheckoutManager.cs" />
-    <Compile Include="AppDownloader.cs" />
+    <Compile Include="DataLoader.cs" />
+    <Compile Include="DownloadInfoWindow.xaml.cs">
+      <DependentUpon>DownloadInfoWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindowModel\NApp.cs" />
+    <Compile Include="MultiDownloadsManager.cs" />
+    <Compile Include="NAppDownloader.cs" />
+    <Page Include="DownloadInfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

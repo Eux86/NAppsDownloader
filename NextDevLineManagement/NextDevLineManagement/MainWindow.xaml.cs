@@ -38,7 +38,8 @@ namespace NextDevLineManagement
 
         private string _baseAddress;
         private string _repoFolder;
-        private string _workFolder;
+        private string _installationFolder;
+        private int _maxSimultaneousDownloads = 3;
 
 
         public string BaseAddress
@@ -59,17 +60,26 @@ namespace NextDevLineManagement
                 OnPropertyChanged("RepoFolder");
             }
         }
-        public string WorkFolder
+        public string InstallationFolder
         {
-            get { return _workFolder; }
+            get { return _installationFolder; }
             set
             {
-                _workFolder = value;
-                OnPropertyChanged("WorkFolder");
+                _installationFolder = value;
+                OnPropertyChanged("InstallationFolder");
+            }
+        }
+        public int MaxSimultaneousDownloads
+        {
+            get { return _maxSimultaneousDownloads; }
+            set
+            {
+                _maxSimultaneousDownloads = value;
+                OnPropertyChanged("MaxSimultaneousDownloads");
             }
         }
 
-        public ObservableCollection<CheckedListItem<NextAppItem>> AppListItems { get; set; }
+        public ObservableCollection<CheckedListItem<NApp>> AppListItems { get; set; }
         
 
         public MainWindow()
@@ -83,15 +93,14 @@ namespace NextDevLineManagement
         {
             BaseAddress = @"https://10.161.125.46/svn/";
             Branch = "/Branch/Sprint/CCE.17.2";
-            WorkFolder = @"T:\@workTest";
+            InstallationFolder = @"T:\@workTest";
 
-            AppListItems = new ObservableCollection<CheckedListItem<NextAppItem>>();
-            AppListItems.Add(new CheckedListItem<NextAppItem>(new NextAppItem() { Name = "MarketplaceBusinessLine",DestinationFolder=WorkFolder+@"\1_Applications\MarketplaceBusinessLine"}, true));
-            AppListItems.Add(new CheckedListItem<NextAppItem>(new NextAppItem() { Name = "Marketplace", DestinationFolder = WorkFolder + @"\1_Applications\Marketplace" }, true));
-            AppListItems.Add(new CheckedListItem<NextAppItem>(new NextAppItem() { Name = "ConfigurationManagementScripts", DestinationFolder = WorkFolder + @"\0_Scripts" }, true));
+
+
+            AppListItems = DataLoader.LoadAppList(InstallationFolder);
         }
 
-        private string GetAppUrl(NextAppItem app)
+        private string GetAppUrl(NApp app)
         {
             return string.Format("{0}{1}/{2}", BaseAddress, app.Name, Branch);
         }
@@ -100,16 +109,23 @@ namespace NextDevLineManagement
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            MultiCheckoutManager mng = new MultiCheckoutManager(BaseAddress, Branch);
+            MultiDownloadsManager mng = new MultiDownloadsManager(BaseAddress, Branch, MaxSimultaneousDownloads);
             foreach (var item in AppListItems.Where(x => x.IsChecked))
             {
                 mng.AddApp(item.Item);
             }
+            DownloadButton.IsEnabled = false;
             await mng.DownloadAllAsync();
+            DownloadButton.IsEnabled = true;
             MessageBox.Show("Download finished", "Download", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
 
-
+        private void DetailsHyperlink_OnClick(object sender, RoutedEventArgs e)
+        {
+            var app = (NApp)((Hyperlink)sender).Tag;
+            var detailsWindows = new DownloadInfoWindow(app);
+            detailsWindows.Show();
+        }
     }
 }

@@ -1,0 +1,8 @@
+﻿<Window x:Class="NextDevLineManagement.DownloadInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DownloadInfoWindow" Height="283" Width="714">
+    <Grid>
+        <TextBox Margin="10" TextWrapping="Wrap" Text="{Binding DownloadOutput}" IsEnabled="False" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+    </Grid>
+</Window>

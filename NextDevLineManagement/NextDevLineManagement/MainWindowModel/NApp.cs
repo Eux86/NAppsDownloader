@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NextDevLineManagement.MainWindowModel
 {
-    public class NextAppItem : INotifyPropertyChanged
+    public class NApp : INotifyPropertyChanged
     {
         #region PropertyChanged Implementation
         public event PropertyChangedEventHandler PropertyChanged;
@@ -23,6 +23,7 @@ namespace NextDevLineManagement.MainWindowModel
         private string _name;
         private StateTypes _state;
         private string _destinationFolder;
+        private string _downloadOutput;
 
         public string Name
         {
@@ -51,9 +52,18 @@ namespace NextDevLineManagement.MainWindowModel
                 OnPropertyChanged("DestinationFolder");
             }
         }
-        public enum StateTypes { Downloading, Finished, Waiting };
+        public string DownloadOutput
+        {
+            get { return _downloadOutput; }
+            set
+            {
+                _downloadOutput = value;
+                OnPropertyChanged("DownloadOutput");
+            }
+        }
+        public enum StateTypes { Downloading, Finished, Waiting, Error };
 
-        public NextAppItem()
+        public NApp()
         {
             State = StateTypes.Waiting;
         }

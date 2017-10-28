@@ -1,34 +1,68 @@
 ﻿<Window x:Class="NextDevLineManagement.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Next Line Manager" Height="351" Width="551"
-        x:Name="_this">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+        Title="NLineManager" Height="424" Width="612"
+        WindowStartupLocation="CenterScreen">
     <Grid Margin="0,0,0,37">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="139"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="126"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Label Content="Base Address" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26" />
-        <Label Content="Repo Folder" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26"/>
-        <Label Content="@Work Folder" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26"/>
+        <Label Grid.Column="0" Content="Base Address" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26" />
+        <Label Grid.Column="0" Content="Repo Folder" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26"/>
+        <Label Grid.Column="0" Content="@Work Folder" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26"/>
         <TextBox Grid.Column="1" Height="23" Margin="0,13,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Name="TxtBaseAddress" Text="{Binding BaseAddress}"/>
         <TextBox Grid.Column="1" Height="23" Margin="0,44,10,0" TextWrapping="Wrap" Text="{Binding Branch}" VerticalAlignment="Top" x:Name="TxtRepoFolder"/>
-        <ListBox Grid.Column="1" Name="listBoxZone" ItemsSource="{Binding AppListItems}" Margin="0,103,10,-2">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <WrapPanel Orientation="Horizontal" >
-                        <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding Path=Item.Name}" Margin="0 0 10 0" />
-                        <TextBlock Text="{Binding Path=Item.State}" />
-                    </WrapPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <Grid Grid.ColumnSpan="2" Margin="0,0,0,-35" Height="28" VerticalAlignment="Bottom">
-            <Button Content="Download" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.427,-0.211" Click="Button_Click"/>
+        <DataGrid Grid.Column="1" ItemsSource="{Binding AppListItems}" AutoGenerateColumns="False" Margin="0,7,10,-2" Grid.Row="1" >
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsChecked}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="State" Width="80" Binding="{Binding Item.State}" />
+                <DataGridTemplateColumn Header="" Width="60" IsReadOnly="True" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Label>
+                                <Hyperlink Name="DetailsHyperlink" Tag="{Binding Item}" Click="DetailsHyperlink_OnClick">
+                                    <TextBlock>
+                                        <TextBlock.Resources>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text" Value="Details"></Setter>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Item.Name}" Value="{x:Null}">
+                                                        <Setter Property="Text" Value=""/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Resources>
+                                    </TextBlock>
+                                </Hyperlink>
+                            </Label>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <!--<DataGridTextColumn Header="Details" Binding="{Binding Item.DownloadOutput}" />-->
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.ColumnSpan="2" Margin="0,0,0,-35" Height="28" VerticalAlignment="Bottom" Grid.Row="1">
+            <Button Name="DownloadButton" Content="Download" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.427,-0.211" Click="Button_Click"/>
         </Grid>
-        <Label Content="Apps to download" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26"/>
-        <TextBox Grid.Column="1" Height="23" Margin="0,75,75,0" TextWrapping="Wrap" Text="{Binding WorkFolder}" VerticalAlignment="Top" x:Name="TxtRepoFolder_Copy"/>
-        <Button Content="Select" HorizontalAlignment="Right" Margin="0,76,10,0" VerticalAlignment="Top" Width="60" Grid.Column="1"/>
+        <Label Grid.Column="0" Content="Apps to download" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26" Grid.Row="1"/>
+        <TextBox Grid.Column="1" Height="23" Margin="0,75,75,0" TextWrapping="Wrap" Text="{Binding InstallationFolder}" VerticalAlignment="Top" x:Name="TxtRepoFolder_Copy"/>
+        <Button IsEnabled="False" ToolTip="WIP" Content="Select" HorizontalAlignment="Right" Margin="0,76,10,0" VerticalAlignment="Top" Width="60" Grid.Column="1" Height="20"/>
+        <Label Grid.Column="0" Content="Max Sim. Downl." HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2" Height="26"/>
+        <TextBox Grid.Column="1" Height="23" Margin="0,106,436,0" TextWrapping="Wrap" Text="{Binding MaxSimultaneousDownloads}" VerticalAlignment="Top" x:Name="TxtRepoFolder_Copy1"/>
 
     </Grid>
 </Window>
